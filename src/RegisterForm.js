@@ -3,10 +3,36 @@ import styled from "styled-components";
 import { Container, Typography, TextField, Button } from "@material-ui/core";
 import logo from "./logo.svg";
 
+import { useMutation, useQuery } from "@apollo/react-hooks";
+import { gql } from "apollo-boost";
+
+const REGISTER_MUTATION = gql`
+  mutation Register($input: RegisterInput!) {
+    register(input: $input) {
+      id
+      fullname
+      age
+      email
+    }
+  }
+`;
+
+const USERS_QUERY = gql`
+  # Write your query or mutation here
+  query Users {
+    users {
+      id
+      fullname
+      age
+      email
+    }
+  }
+`;
+
 // TODO replace custom state with Formik
 // TODO use formik for validation
 // TODO use validation with material-ui to show HelperText
-const useForm = () => {
+const useForm = ({ onSubmit }) => {
   const [state, setState] = React.useState({});
   const handleChange = (key) => (evt) => {
     setState({
@@ -18,6 +44,7 @@ const useForm = () => {
   const handleSubmit = async () => {
     // const user = await client.login({email, password});
     console.log("REGISTER USER", state);
+    onSubmit(state);
   };
 
   return {
@@ -28,7 +55,21 @@ const useForm = () => {
 };
 
 const RegisterForm = () => {
-  const { state, handleChange, handleSubmit } = useForm();
+  const [register] = useMutation(REGISTER_MUTATION);
+  const { data, loading, error } = useQuery(USERS_QUERY);
+  const { state, handleChange, handleSubmit } = useForm({
+    onSubmit: ({ repeatPassword, ...values }) => {
+      console.log("REGISTER", values);
+      register({
+        variables: {
+          input: values,
+        },
+      }).then((result) => {
+        console.log("RESULT", { result });
+      });
+    },
+  });
+
   return (
     <Container maxWidth="sm">
       <Logo src={logo} />
@@ -89,6 +130,7 @@ const RegisterForm = () => {
           </Button>
         </FormContainer>
       </form>
+      {JSON.stringify(data)}
     </Container>
   );
 };
