@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
-const CONNECTION_STRING =
-  process.env.CONNECTION_STRING ||
-  `mongodb+srv://webUser:webPassword@web-cluster-ubhcy.mongodb.net/test?retryWrites=true&w=majority`;
+const CONNECTION_STRING = process.env.CONNECTION_STRING;
 
 mongoose.connect(CONNECTION_STRING, {
   useNewUrlParser: true,
