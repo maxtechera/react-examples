@@ -2,8 +2,10 @@ import * as React from "react";
 import styled from "styled-components/native";
 // import logo from "../assets/logo.svg";
 import { TextInput, Button, Title } from "react-native-paper";
+import { useNavigation } from "@react-navigation/native";
 
 const LoginForm = () => {
+  const navigation = useNavigation();
   const [password, setPassword] = React.useState("");
   const [email, setEmail] = React.useState("");
   const handleSubmit = async () => {
@@ -33,6 +35,9 @@ const LoginForm = () => {
         />
         <Button mode="contained" onPress={() => handleSubmit()}>
           LOGIN
+        </Button>
+        <Button onPress={() => navigation.replace("Register")}>
+          Go To register
         </Button>
       </FormContainer>
     </Container>

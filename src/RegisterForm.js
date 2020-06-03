@@ -55,7 +55,7 @@ const useForm = ({ onSubmit }) => {
   };
 };
 
-const RegisterForm = () => {
+const useRegister = () => {
   const [register] = useMutation(REGISTER_MUTATION);
   const { data, loading, error } = useQuery(USERS_QUERY);
   const { state, handleChange, handleSubmit } = useForm({
@@ -70,6 +70,15 @@ const RegisterForm = () => {
       });
     },
   });
+  return { 
+    state, handleChange, handleSubmit
+  }
+}
+
+const RegisterForm = () => {
+  const {
+    state, handleChange, handleSubmit
+  } = useRegister();
 
   return (
     <Container maxWidth="sm">
