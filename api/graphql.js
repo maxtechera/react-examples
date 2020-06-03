@@ -5,5 +5,4 @@ const resolvers = require("./resolvers");
 const apolloServer = new ApolloServer({ typeDefs, resolvers });
 module.exports = apolloServer.createHandler({
   path: "/api/graphql",
-  introspection: true,
 });
