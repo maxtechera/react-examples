@@ -12,6 +12,7 @@
     "apollo-boost": "^0.4.7",
     "apollo-server-micro": "^2.14.1",
     "graphql": "^15.0.0",
+    "jsonwebtoken": "^8.5.1",
     "micro": "^9.3.4",
     "micro-cors": "^0.1.1",
     "mongoose": "^5.9.13",

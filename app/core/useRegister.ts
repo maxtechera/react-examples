@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useMutation } from "@apollo/react-hooks";
 import { gql } from "apollo-boost";
-
+import { AsyncStorage } from 'react-native';
 const REGISTER_MUTATION = gql`
   mutation Register($input: RegisterInput!) {
     register(input: $input) {
@@ -9,6 +9,7 @@ const REGISTER_MUTATION = gql`
       fullname
       age
       email
+      token
     }
   }
 `;
@@ -56,8 +57,10 @@ const useRegister = () => {
         variables: {
           input: values,
         },
-      }).then((result) => {
+      }).then(async (result) => {
         console.log("RESULT", { result });
+        const token = result.data.register.token;
+        await AsyncStorage.setItem("token", token);
         return result;
       });
     },

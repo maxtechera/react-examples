@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, AsyncStorage } from "react-native";
 import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
 import HomeScreen from "./screens/HomeScreen";
@@ -23,11 +23,25 @@ const RegisterScreen = ({ navigation }) => (
 
 const RootStack = createStackNavigator();
 export default function App() {
+  const [isReady, setReady] = React.useState(false);
+  const [isSignedIn, setIsSignedIn] = React.useState(false);
+
+  React.useEffect(() => {
+    AsyncStorage.getItem("token")
+      .then((token) => {
+        console.log("Token", token);
+        setIsSignedIn(!!token);
+      })
+      .finally(() => setReady(true));
+  }, []);
+  console.log("root", { isReady, isSignedIn });
+  if (!isReady) return null;
+  const initialRouteName = isSignedIn ? "Home" : "Login";
   return (
     <ApolloProvider client={client}>
       <PaperProvider>
         <NavigationContainer>
-          <RootStack.Navigator>
+          <RootStack.Navigator initialRouteName={initialRouteName}>
             <RootStack.Screen name="Login" component={LoginScreen} />
             <RootStack.Screen name="Register" component={RegisterScreen} />
             <RootStack.Screen name="Home" component={HomeScreen} />
