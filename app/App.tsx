@@ -22,33 +22,69 @@ const RegisterScreen = ({ navigation }) => (
 );
 
 const RootStack = createStackNavigator();
+
+export const AuthContext = React.createContext({
+  token: "",
+  setToken: (x: string) => {
+    console.log("X", x);
+  },
+});
+
 export default function App() {
   const [isReady, setReady] = React.useState(false);
-  const [isSignedIn, setIsSignedIn] = React.useState(false);
+  const [token, setToken] = React.useState<string>("");
 
   React.useEffect(() => {
     AsyncStorage.getItem("token")
       .then((token) => {
         console.log("Token", token);
-        setIsSignedIn(!!token);
+        if (token) setToken(token);
       })
       .finally(() => setReady(true));
   }, []);
-  console.log("root", { isReady, isSignedIn });
+
+  React.useEffect(() => {
+    AsyncStorage.getItem("token").then((storedToken) => {
+      if (storedToken != token) {
+        AsyncStorage.setItem("token", token);
+      }
+    });
+  }, [token]);
+
+  console.log("App", { isReady, token });
   if (!isReady) return null;
-  const initialRouteName = isSignedIn ? "Home" : "Login";
+  const initialRouteName = token ? "Home" : "Login";
   return (
-    <ApolloProvider client={client}>
-      <PaperProvider>
-        <NavigationContainer>
-          <RootStack.Navigator initialRouteName={initialRouteName}>
-            <RootStack.Screen name="Login" component={LoginScreen} />
-            <RootStack.Screen name="Register" component={RegisterScreen} />
-            <RootStack.Screen name="Home" component={HomeScreen} />
-          </RootStack.Navigator>
-        </NavigationContainer>
-      </PaperProvider>
-    </ApolloProvider>
+    <AuthContext.Provider
+      value={{
+        token,
+        setToken: (x) => {
+          setToken(x);
+        },
+      }}
+    >
+      <ApolloProvider client={client}>
+        <PaperProvider>
+          <NavigationContainer>
+            <RootStack.Navigator initialRouteName={initialRouteName}>
+              {!token ? (
+                <>
+                  <RootStack.Screen name="Login" component={LoginScreen} />
+                  <RootStack.Screen
+                    name="Register"
+                    component={RegisterScreen}
+                  />
+                </>
+              ) : (
+                <>
+                  <RootStack.Screen name="Home" component={HomeScreen} />
+                </>
+              )}
+            </RootStack.Navigator>
+          </NavigationContainer>
+        </PaperProvider>
+      </ApolloProvider>
+    </AuthContext.Provider>
   );
 }
 

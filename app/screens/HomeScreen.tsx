@@ -4,8 +4,10 @@ import { Title, Text, Button } from "react-native-paper";
 import { useQuery } from "@apollo/react-hooks";
 import { gql } from "apollo-boost";
 import { AsyncStorage } from "react-native";
+import { AuthContext } from "../App";
 
 const HomeScreen = ({ navigation }) => {
+  const { setToken } = React.useContext(AuthContext);
   const { data } = useQuery(gql`
     {
       me {
@@ -16,8 +18,7 @@ const HomeScreen = ({ navigation }) => {
   `);
 
   const handleLogout = async () => {
-    await AsyncStorage.setItem("token", "");
-    navigation.push("Login");
+    setToken("");
   };
   return (
     <Container>

@@ -4,15 +4,23 @@ import styled from "styled-components/native";
 import { TextInput, Button, Title } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import useRegister from "../core/useRegister";
+import { AuthContext } from "../App";
+
+const useAuth = () => {
+  const { token, setToken } = React.useContext(AuthContext);
+  return { token, setToken };
+};
 
 const RegisterForm = () => {
   const navigation = useNavigation();
   const { state, handleChange, handleSubmit } = useRegister();
+  const { setToken } = useAuth();
 
   const handlePressSubmit = async () => {
     try {
       const user = await handleSubmit();
-      navigation.replace("Home", { user });
+      setToken(user?.token);
+      // navigation.replace("Home", { user });
     } catch (error) {
       console.log("error", error);
     }
